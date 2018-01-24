@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
 
 from multiprocessing import Process, Queue
 import os, time, random
@@ -50,8 +45,8 @@ def queue_in_multi_process():
     pr3.terminate()
 
 
-EMAIL_RE = re.compile(r'^[\w|\_|\.]+@[\w]+\.[a-z]{3}$')
-NAME_EMAIL_RE = re.compile(r'(?:<([a-zA-Z\s]+)>)?\s?([\w|\_|\.]+)@([\w]+)\.([a-z]{3}$)')
+EMAIL_RE = re.compile(r'^[\w|_.]+@[\w]+\.[a-z]{3}$')
+NAME_EMAIL_RE = re.compile(r'(?:<([a-zA-Z\s]+)>)?\s?([\w|_.]+)@([\w]+)\.([a-z]{3}$)')
 
 
 def is_valid_email(addr):
@@ -79,7 +74,7 @@ def name_of_email(addr):
         print("%s is not valid email address!" % addr)
         return None
 
-
+'''
 if __name__ == '__main__':
     # queue_in_multi_process()
     assert is_valid_email('someone@gmail.com')
@@ -91,3 +86,4 @@ if __name__ == '__main__':
     assert name_of_email('<Tom Paris> tom@voyager.org') == 'Tom Paris'
     assert name_of_email('tom@voyager.org') == 'tom'
     print('ok')
+'''
