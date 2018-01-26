@@ -26,6 +26,6 @@ if __name__ == '__main__':
     with create_query('Bob') as q:
         q.query()
 
-    with closing(urlopen('https://www.python.org')) as page:
-        for line in page:
-            print(line)
+    # with closing(urlopen('https://www.python.org')) as page:
+    #     for line in page:
+    #         print(line)
