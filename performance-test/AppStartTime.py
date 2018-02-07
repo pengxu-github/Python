@@ -2,7 +2,6 @@
 
 import os
 import sys
-import subprocess
 import time
 import xlwt
 from CommandExecuter import CommandExecuter
@@ -159,11 +158,11 @@ class ItemTest:
 
         if self.test_times_avaliable >= 3:
             THISTIMEAVERAGE = (self.THISTIMEAVERAGE - self.MAX_ITEM[0] - self.MIN_ITEM[0]) / (
-                        self.test_times_avaliable - 2)
+                    self.test_times_avaliable - 2)
             TOTALTIMEAVERAGE = (self.TOTALTIMEAVERAGE - self.MAX_ITEM[1] - self.MIN_ITEM[1]) / (
-                        self.test_times_avaliable - 2)
+                    self.test_times_avaliable - 2)
             WAITTIMEAVERAGE = (self.WAITTIMEAVERAGE - self.MAX_ITEM[2] - self.MIN_ITEM[2]) / (
-                        self.test_times_avaliable - 2)
+                    self.test_times_avaliable - 2)
             self.ws.write(self.test_times_avaliable, 1, THISTIMEAVERAGE, self.style0)
             self.ws.write(self.test_times_avaliable, 3, TOTALTIMEAVERAGE, self.style0)
             self.ws.write(self.test_times_avaliable, 5, WAITTIMEAVERAGE, self.style0)
@@ -195,14 +194,14 @@ class ItemTest:
         CommandExecuter.execute_command('adb shell svc power stayon true')
         (status, output) = CommandExecuter.execute_command('adb shell am start -W ' + self.app_item[1])
         parser = Parser(self.app_item[0], output, status)
-        print("AppStartTime:output:" + output + "(end)");
-        if (str(output).find("Status: ok") < 0):
-            components = self.app_item[1].split("/");
-            package = components[0];
-            print("package:" + components[0]);
+        print("AppStartTime:output:" + output + "(end)")
+        if str(output).find("Status: ok") < 0:
+            components = self.app_item[1].split("/")
+            package = components[0]
+            print("package:" + components[0])
             (status, output) = CommandExecuter.execute_command('adb shell am start -W ' + package)
             parser = Parser(self.app_item[0], output, status)
-            print("output:" + output + "(end)");
+            print("output:" + output + "(end)")
         try:
             Logout.log_temp(self.app_item[0] + '_' + Logout.OUTPUT_FILE, "Times: " + str(self.test_times_avaliable))
             Logout.log_temp(self.app_item[0] + '_' + Logout.OUTPUT_FILE, "Command result: " + str(status))
@@ -215,7 +214,7 @@ class ItemTest:
         result = 0
         if parser.pre_parse() != -1:
             try:
-                parser.parse();
+                parser.parse()
                 (thisTime, totalTime, waitTime) = parser.getParseResult()
                 if DEBUG:
                     Logout.show_message('get_item_time...:' + thisTime + ", " + totalTime + ", " + waitTime)
@@ -264,15 +263,15 @@ class ItemTest:
                 Logout.log_error(self.app_item[0] + '_' + Logout.ERROR_FILE, "Times: " + str(self.test_times_avaliable))
                 Logout.log_error(self.app_item[0] + '_' + Logout.ERROR_FILE, "Command result: " + str(status))
                 Logout.log_error(self.app_item[0] + '_' + Logout.ERROR_FILE, ''.join(output))
-                Logout.log_error(self.app_item[0] + '_' + Logout.ERROR_FILE, "parseResult(this,total,wait): " + \
-                                 str(thisTime) + ", " + str(totalTime) + ", " + str(waitTime))
+                Logout.log_error(self.app_item[0] + '_' + Logout.ERROR_FILE, "parseResult(this,total,wait): "
+                                 + str(thisTime) + ", " + str(totalTime) + ", " + str(waitTime))
                 Logout.log_error(self.app_item[0] + '_' + Logout.ERROR_FILE, '---------------------------')
                 self.THISTIMEAVERAGE = tempThisTime
                 self.TOTALTIMEAVERAGE = tempTotalTime
                 self.WAITTIMEAVERAGE = tempWaitTime
                 result = 0
         try:
-            mmresult = tencent_mm_exists()
+            mmresult = PsUtils.tencent_mm_exists()
             if mmresult == 0:
                 Logout.log_temp(self.app_item[0] + '_' + Logout.OUTPUT_FILE, " tencent mm exists")
             else:
@@ -280,7 +279,7 @@ class ItemTest:
                 Logout.log_temp(self.app_item[0] + '_' + Logout.OUTPUT_FILE,
                                 " tecent mm killed : " + str(self.tencent_mm_killed))
 
-            qqresult = tencent_qq_exists()
+            qqresult = PsUtils.tencent_qq_exists()
             if qqresult == 0:
                 Logout.log_temp(self.app_item[0] + '_' + Logout.OUTPUT_FILE, " tencent qq exists")
             else:

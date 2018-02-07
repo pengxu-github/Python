@@ -2,7 +2,7 @@
 
 from Logcat import Logout
 import xlwt
-from CommandExecuter import CommandExecuter
+from CommandExecuter import CommandExecuter, sys
 from Parser import Parser
 import time
 import TestMode
@@ -47,7 +47,7 @@ class TestItem:
     def test(self):
         Logout.show_message('Testing...' + self.app_item[0])
 
-        if (self.current_loop_times < self.testTime):
+        if self.current_loop_times < self.testTime:
             result = self.__loopOnce()
             Logout.show_message("测试次数： " + str(self.current_loop_times + 1))
             if result == 1:
@@ -70,11 +70,11 @@ class TestItem:
             if self.record:
                 if self.test_times_avaliable >= 3:
                     THISTIMEAVERAGE = (self.THISTIMEAVERAGE - self.MAX_ITEM[0] - self.MIN_ITEM[0]) / (
-                                self.test_times_avaliable - 2)
+                            self.test_times_avaliable - 2)
                     TOTALTIMEAVERAGE = (self.TOTALTIMEAVERAGE - self.MAX_ITEM[1] - self.MIN_ITEM[1]) / (
-                                self.test_times_avaliable - 2)
+                            self.test_times_avaliable - 2)
                     WAITTIMEAVERAGE = (self.WAITTIMEAVERAGE - self.MAX_ITEM[2] - self.MIN_ITEM[2]) / (
-                                self.test_times_avaliable - 2)
+                            self.test_times_avaliable - 2)
                     self.ws.write(self.test_times_avaliable, 1, THISTIMEAVERAGE, self.style0)
                     self.ws.write(self.test_times_avaliable, 3, TOTALTIMEAVERAGE, self.style0)
                     self.ws.write(self.test_times_avaliable, 5, WAITTIMEAVERAGE, self.style0)
