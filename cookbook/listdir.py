@@ -26,3 +26,11 @@ for name in names:
         my_print('file', full_name)
     else:
         my_print('other', full_name)
+
+ndis_dir = b'udce4'
+ndis_file = b'udce4.txt'
+if not os.path.exists(ndis_dir):
+    os.mkdir(ndis_dir)
+with open(os.path.join(ndis_dir, ndis_file), 'w') as f:
+    f.write('hello world')
+f.close()
