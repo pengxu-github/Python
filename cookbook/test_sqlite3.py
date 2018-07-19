@@ -20,6 +20,8 @@ if not os.path.exists(abs_db_path):
     c.execute('CREATE TABLE portfolio (symbol TEXT, shares INTEGER, price REAL)')
     c.executemany('INSERT INTO portfolio VALUES (?,?,?)', stocks)
     db.commit()
+    c.close()
+    db.close()
 else:
     print('db data:')
     db = sqlite3.connect(abs_db_path)
@@ -28,3 +30,4 @@ else:
     if rows.arraysize > 0:
         for row in rows:
             print(row)
+    db.close()
