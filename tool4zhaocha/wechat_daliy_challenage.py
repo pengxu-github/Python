@@ -34,8 +34,8 @@ def on_click(event):
 def press(coords):
     ix = coords[0][0]
     iy = coords[0][1]
-    cmd = 'adb shell input swipe {x1} {y1} {x2} {y2} {duration}'.format(x1=ix - 10, y1=iy - 10, x2=ix + 10, y2=iy + 10,
-                                                                        duration=100)
+    cmd = 'adb shell input swipe {x1} {y1} {x2} {y2} {duration}' \
+        .format(x1=ix - 10, y1=iy - 10, x2=ix + 10, y2=iy + 10, duration=100)
     os.system(cmd)
 
 

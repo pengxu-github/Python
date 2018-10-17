@@ -1,6 +1,6 @@
 # 适用于对战模式
 import os
-import sys
+import subprocess
 from PIL import Image
 import cv2
 from PIL import ImageChops
@@ -8,9 +8,23 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+def getAbsPath():
+    abs_file = __file__
+    print("abs path is %s" % __file__)
+    abs_dir = abs_file[:abs_file.rfind("\\")]
+    return abs_file, abs_dir
+
+
+def execute_command(command):
+    (status, ouput) = subprocess.getstatusoutput(command)
+    return status, ouput
+
+
 def pull_screenshot():
-    os.system('adb shell screencap -p /sdcard/findTheDiff.png')
-    os.system('adb pull /sdcard/findTheDiff.png .')
+    execute_command('adb shell screencap -p /sdcard/findTheDiff.png')
+    execute_command('adb pull /sdcard/findTheDiff.png .')
+    abs_file, abs_path = getAbsPath()
+    print("abs file: %s, abs path: %s".format(abs_file, abs_path))
     img = cv2.imread('findTheDiff.png')
     crop_img1 = img[99:924, 199:1024]  # 这里需要将对比的部分以img的格式提取出来
     crop_img2 = img[997:1822, 199:1024]
@@ -36,8 +50,8 @@ def on_click(event):
 def press(coords):
     ix = coords[0][0]
     iy = coords[0][1]
-    cmd = 'adb shell input swipe {x1} {y1} {x2} {y2} {duration}'.format(x1=ix - 10, y1=iy - 10, x2=ix + 10, y2=iy + 10,
-                                                                        duration=100)
+    cmd = 'adb shell input swipe {x1} {y1} {x2} {y2} {duration}' \
+        .format(x1=ix - 10, y1=iy - 10, x2=ix + 10, y2=iy + 10, duration=100)
     os.system(cmd)
 
 
