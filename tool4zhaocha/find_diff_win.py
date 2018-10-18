@@ -1,5 +1,12 @@
 # coding=utf-8
-from pprint import pprint
+import time
+
+import numpy
+import win32con
+import win32gui
+import win32process
+import matplotlib.pyplot as plt
+from PIL import ImageGrab, ImageChops
 
 __author__ = 'XuPeng'
 
@@ -9,12 +16,16 @@ pythonwin中win32gui的用法
 并遍历所有顶层窗口中的子窗口
 '''
 
-import win32gui
-import win32process
-
 debug = True
 wnd_title = 'TIM图片20181017200431.png - Windows 照片查看器'
 wnd_class = 'Photo_Lightweight_Viewer'
+img_left_bound = 640
+img_top_bound = 275
+img_right_bound = 1280
+img_bottom_bound = 685
+
+limg_right_bound = 310
+rimg_left_bound = 330
 
 
 def gbk2utf8(s):
@@ -119,11 +130,39 @@ def find_child_window(class_name, title_name):
     if debug:
         print('find window from class name: %s, title name: %s, result: %d, %d, %d, %d'
               % (class_name, title_name, left, top, right, bottom))
-    return left, top, right, bottom
+    return hwnd, left, top, right, bottom
 
 
 hWndList = get_hwnds()
 show_windows(hWndList)
 
-l, t, r, b = find_child_window(wnd_class, wnd_title)
-print('left, top, right, bottom: '.format(l, t, r, b))
+wnd_id, l, t, r, b = find_child_window(wnd_class, wnd_title)
+print('windows id, left, top, right, bottom: %d, %d, %d, %d, %d' % (wnd_id, l, t, r, b))
+win32gui.ShowWindow(wnd_id, win32con.SW_MAXIMIZE)
+
+time.sleep(3)
+src_image = ImageGrab.grab((img_left_bound, img_top_bound, img_right_bound, img_bottom_bound))
+# do not use src_image.show() here, because show this picture will influence left img and right img cut
+width, height = src_image.size
+# cut left img and right img
+left_box = (0, 1, limg_right_bound, height)
+right_box = (rimg_left_bound, 0, width, height)
+image_left = src_image.crop(left_box)
+image_right = src_image.crop(right_box)
+# image_left.show()
+# image_right.show()
+
+plt.subplot(1, 3, 1), plt.title('image_left')
+plt.imshow(image_left)
+plt.show()
+
+plt.subplot(1, 3, 2), plt.title('image_right')
+plt.imshow(image_right)
+plt.show()
+
+diff = ImageChops.difference(image_left, image_right)
+img_diff = numpy.array(diff)
+plt.subplot(1, 3, 3), plt.title('image_diff')
+plt.imshow(img_diff)
+plt.show()
+
