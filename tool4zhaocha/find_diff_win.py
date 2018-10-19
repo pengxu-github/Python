@@ -56,20 +56,6 @@ def show_windows(hWndList):
         show_window_attr(h)
 
 
-'''
-def demo_top_windows():
-    """
-    演示如何列出所有的顶级窗口
-    :return:
-    """
-    hWndList = []
-    win32gui.EnumWindows(lambda hWnd, param: param.append(hWnd), hWndList)
-    show_windows(hWndList)
-
-    return hWndList
-'''
-
-
 def _MyCallback(hwnd, extra):
     if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
         windows = extra
@@ -107,21 +93,6 @@ def demo_child_windows(parent):
     return hWndChildList
 
 
-def get_hwnds1(pid):
-    """return a list of window handlers based on it process id"""
-
-    def callback(hwnd, hwnds):
-        if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
-            _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
-            if found_pid == pid:
-                hwnds.append(hwnd)
-        return True
-
-    hwnds = []
-    win32gui.EnumWindows(callback, hwnds)
-    return hwnds
-
-
 def find_child_window(class_name, title_name):
     # 获取句柄
     hwnd = win32gui.FindWindow(class_name, title_name)
@@ -133,36 +104,81 @@ def find_child_window(class_name, title_name):
     return hwnd, left, top, right, bottom
 
 
-hWndList = get_hwnds()
-show_windows(hWndList)
+def compare(image_a, image_b):
+    """
+    返回两图的差异值
+    返回两图红绿蓝差值万分比之和
+    """
+    histogram_a = image_a.histogram()
+    histogram_b = image_b.histogram()
+    if len(histogram_a) != 768 or len(histogram_b) != 768: return None
+    red_a = 0
+    red_b = 0
+    for i in range(0, 256):
+        red_a += histogram_a[i + 0] * i
+        red_b += histogram_b[i + 0] * i
+    diff_red = 0
+    if red_a + red_b > 0:
+        diff_red = abs(red_a - red_b) * 10000 / max(red_a, red_b)
 
-wnd_id, l, t, r, b = find_child_window(wnd_class, wnd_title)
-print('windows id, left, top, right, bottom: %d, %d, %d, %d, %d' % (wnd_id, l, t, r, b))
-win32gui.ShowWindow(wnd_id, win32con.SW_MAXIMIZE)
+    green_a = 0
+    green_b = 0
+    for i in range(0, 256):
+        green_a += histogram_a[i + 256] * i
+        green_b += histogram_b[i + 256] * i
+    diff_green = 0
+    if green_a + green_b > 0:
+        diff_green = abs(green_a - green_b) * 10000 / max(green_a, green_b)
 
-time.sleep(3)
-src_image = ImageGrab.grab((img_left_bound, img_top_bound, img_right_bound, img_bottom_bound))
-# do not use src_image.show() here, because show this picture will influence left img and right img cut
-width, height = src_image.size
-# cut left img and right img
-left_box = (0, 1, limg_right_bound, height)
-right_box = (rimg_left_bound, 0, width, height)
-image_left = src_image.crop(left_box)
-image_right = src_image.crop(right_box)
-# image_left.show()
-# image_right.show()
+    blue_a = 0
+    blue_b = 0
+    for i in range(0, 256):
+        blue_a += histogram_a[i + 512] * i
+        blue_b += histogram_b[i + 512] * i
+    diff_blue = 0
+    if blue_a + blue_b > 0:
+        diff_blue = abs(blue_a - blue_b) * 10000 / max(blue_a, blue_b)
+    return diff_red, diff_green, diff_blue
 
-plt.subplot(1, 3, 1), plt.title('image_left')
-plt.imshow(image_left)
-plt.show()
 
-plt.subplot(1, 3, 2), plt.title('image_right')
-plt.imshow(image_right)
-plt.show()
+def find_diff():
+    hWndList = get_hwnds()
+    show_windows(hWndList)
 
-diff = ImageChops.difference(image_left, image_right)
-img_diff = numpy.array(diff)
-plt.subplot(1, 3, 3), plt.title('image_diff')
-plt.imshow(img_diff)
-plt.show()
+    wnd_id, l, t, r, b = find_child_window(wnd_class, wnd_title)
+    print('windows id, left, top, right, bottom: %d, %d, %d, %d, %d' % (wnd_id, l, t, r, b))
+    # full windows display
+    # win32gui.ShowWindow(wnd_id, win32con.SW_MAXIMIZE)
+    # bring window to foreground
+    win32gui.SetForegroundWindow(wnd_id)
 
+    time.sleep(3)
+    src_image = ImageGrab.grab((img_left_bound, img_top_bound, img_right_bound, img_bottom_bound))
+    # do not use src_image.show() here,
+    # because show this picture will influence left img and right img cut
+    width, height = src_image.size
+    # cut left img and right img
+    left_box = (0, 1, limg_right_bound, height)
+    right_box = (rimg_left_bound, 0, width, height)
+    image_left = src_image.crop(left_box)
+    image_right = src_image.crop(right_box)
+    # image_left.show()
+    # image_right.show()
+
+    plt.figure(num='image diff', figsize=(10, 7))
+    plt.suptitle('image diff')
+    plt.subplot(1, 3, 1), plt.title('image_left')
+    plt.imshow(image_left)
+
+    plt.subplot(1, 3, 2), plt.title('image_right')
+    plt.imshow(image_right)
+
+    diff = ImageChops.difference(image_left, image_right)
+    img_diff = numpy.array(diff)
+    plt.subplot(1, 3, 3), plt.title('image_diff')
+    plt.imshow(img_diff)
+    plt.show()
+
+
+if __name__ == "__main__":
+    find_diff()
