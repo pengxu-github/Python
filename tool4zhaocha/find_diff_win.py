@@ -2,11 +2,11 @@
 import time
 
 import numpy
-import win32con
 import win32gui
-import win32process
 import matplotlib.pyplot as plt
 from PIL import ImageGrab, ImageChops
+
+from tool4zhaocha.mouse_position import start_get_mouse_click_pos, get_grab_pos
 
 __author__ = 'XuPeng'
 
@@ -141,7 +141,17 @@ def compare(image_a, image_b):
     return diff_red, diff_green, diff_blue
 
 
-def find_diff():
+def find_diff(left_l=img_left_bound, left_t=img_top_bound, right_r=img_right_bound,
+              right_b=img_bottom_bound, left_width=limg_right_bound, right_l=rimg_left_bound):
+    """
+    :param left_l: left of left picture, in the window
+    :param left_t: top of left picture, in the window
+    :param right_r: right of right picture, in the window
+    :param right_b: bottom of right picture, in the window
+    :param left_width: width of left picture
+    :param right_l: begin of right picture, in the picture grabbed
+    :return: NULL
+    """
     hWndList = get_hwnds()
     show_windows(hWndList)
 
@@ -153,13 +163,13 @@ def find_diff():
     win32gui.SetForegroundWindow(wnd_id)
 
     time.sleep(3)
-    src_image = ImageGrab.grab((img_left_bound, img_top_bound, img_right_bound, img_bottom_bound))
+    src_image = ImageGrab.grab((left_l, left_t, right_r, right_b))
     # do not use src_image.show() here,
     # because show this picture will influence left img and right img cut
     width, height = src_image.size
     # cut left img and right img
-    left_box = (0, 1, limg_right_bound, height)
-    right_box = (rimg_left_bound, 0, width, height)
+    left_box = (0, 1, left_width, height)
+    right_box = (right_l, 0, width, height)
     image_left = src_image.crop(left_box)
     image_right = src_image.crop(right_box)
     # image_left.show()
@@ -180,5 +190,17 @@ def find_diff():
     plt.show()
 
 
+def start_grab():
+    print("please click upper left corner of the left diff picture")
+    start_get_mouse_click_pos()
+    left_l, left_t, left_r, left_b = get_grab_pos()
+    print("l, t, r, b: %d, %d, %d, %d" % (left_l, left_t, left_r, left_b))
+    print("please click upper left corner of the right diff picture")
+    start_get_mouse_click_pos()
+    right_l, right_t, right_r, right_b = get_grab_pos()
+
+    find_diff(left_l, left_t, right_r, right_b, left_r - left_l, right_l - left_r)
+
+
 if __name__ == "__main__":
-    find_diff()
+    start_grab()
