@@ -175,10 +175,9 @@ def find_diff(left_l=img_left_bound, left_t=img_top_bound, right_r=img_right_bou
         # bring window to foreground
         win32gui.SetForegroundWindow(wnd_id)
 
-        time.sleep(3)
-    else:
-        print('scr image: {}, {}, {}, {}'.format(left_l, left_t, right_r, right_b))
-        src_image = ImageGrab.grab((left_l, left_t, right_r, right_b))
+    time.sleep(1)
+    print('scr image: {}, {}, {}, {}'.format(left_l, left_t, right_r, right_b))
+    src_image = ImageGrab.grab((left_l, left_t, right_r, right_b))
     # do not use src_image.show() here,
     # because show this picture will influence left img and right img cut
     width, height = src_image.size
@@ -232,6 +231,8 @@ def on_mouse_event(event):
             print('left: %d, %d, %d, %d; right: %d, %d, %d, %d'
                   % (left_l, left_t, left_r, left_b, right_l, right_t, right_r, right_b))
             find_diff(left_l, left_t, right_r, right_b, left_r - left_l, right_l - left_l)
+            # use default size
+            # find_diff()
     return True
 
 
