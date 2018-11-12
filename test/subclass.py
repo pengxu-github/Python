@@ -35,8 +35,7 @@ class Books(object):
         return self.title
 
     def __call__(self):
-        print
-        "%s is written by %s" % (self.title, self.author)
+        print("%s is written by %s" % (self.title, self.author))
 
 
 # 调用
