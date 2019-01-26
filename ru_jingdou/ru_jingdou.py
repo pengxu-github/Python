@@ -10,6 +10,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 # 额外抽取的授权模块
 from utils import auth
 
+chromedriver = "D:\software\python\Lib\site-packages\chromedriver_py\chromedriver_win32.exe"
+
 
 class QMM(object):
     """借助券妈妈平台褥京东京豆"""
@@ -76,7 +78,7 @@ class QMM(object):
 
         if malls:
             # 登陆京东(Chrome、PhantomJS or FireFox)
-            driver = webdriver.Chrome()  # driver = webdriver.PhantomJS()
+            driver = webdriver.Chrome(chromedriver)  # driver = webdriver.PhantomJS()
             jd_login = 'https://passport.jd.com/new/login.aspx'
             driver.get(jd_login)
 
@@ -172,5 +174,5 @@ class QMM(object):
 
 
 if __name__ == '__main__':
-    qmm = QMM(sleep=3, months='7-8', days='16-31')
+    qmm = QMM(sleep=3, months='1-2', days='16-31')
     qmm.start()
