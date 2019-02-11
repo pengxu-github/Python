@@ -1,6 +1,5 @@
 # encoding=utf-8
-# 源码加微信：mmp9972
-# Python交流群：548377875
+
 import tkinter
 import tkinter.messagebox
 import webbrowser
