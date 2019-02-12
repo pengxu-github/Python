@@ -1,3 +1,5 @@
+import datetime
+import multiprocessing
 import os
 import time
 
@@ -5,7 +7,7 @@ import time
 # 模拟点按
 def tap(x0, y0):
     cmdTap = 'adb shell input tap {x1} {y1}'.format(x1=x0, y1=y0)
-    print(cmdTap)
+    print(datetime.datetime.now(), cmdTap)
     os.system(cmdTap)
 
 
@@ -16,7 +18,17 @@ def tap_delay(x0, y0, delay, times):
     while times > 0:
         tap(x0, y0)
         times = times - 1
+        print(times, " ", delay)
         time.sleep(delay)
+
+
+def tap_cycle(x0, y0):
+    """
+    tap (x0, y0) use 10 process
+    """
+    for i in range(10):
+        p = multiprocessing.Process(target=tap, args=(x0, y0))
+        p.start()
 
 
 # 模拟滑动
