@@ -24,45 +24,29 @@ release_git_revision = 'REL/cmcc_dev'
 
 git_user = ''
 
-diff_repository = {
-    'build',
-    'frameworks',
-    'vendor',
+git_projects_dict_test = {
+    "Freeme/platforms/android-25/anbox/platform/external":
+        ("external", default_git_revision, 'f8d3006c2c', '0006_android_external_sccontrol.diff'),
+    "Freeme/platforms/android-25/anbox/platform/vendor/anbox":
+        ('vendor/anbox', default_git_revision, 'db06c81', '0005_android_vendor_anbox_config.diff'),
+    "Freeme/platforms/common/apps/FreemeContacts":
+        ("vendor/cmcc/packages/apps/CmccContacts", release_git_revision)
 }
-
-diff_repository_info_dict = {
-}
-"""
-repositories for create diff patch.
-
-key is repository name;
-
-value is relative path, git revision, 
-"""
-
-external_project_dict = {
-    "Freeme/platforms/android-25/anbox/platform/external": ("external", default_git_revision)
-}
-"""
-repositories for external binary patch.
-
-key is repository name;
-
-value is relative path, git revision.
-"""
 
 git_projects_dict = {
     # repositories for diff
     "Freeme/platforms/android-25/anbox/platform/build":
         ('build', default_git_revision, 'b617dfd', '0001_android_build_mk.diff'),
+    "Freeme/platforms/android-25/anbox/platform/external":
+        ("external", default_git_revision, 'f8d3006c2c', '0006_android_external_sccontrol.diff'),
     "Freeme/platforms/android-25/anbox/platform/frameworks":
         ('frameworks', default_git_revision, 'daedb26', '0002_android_frameworks_all.diff'),
     "Freeme/platforms/android-25/anbox/platform/libcore":
-        ('libcore', default_git_revision, 'b7ff0ee', '0003_android_libcore_cpuadjust.diff'),
+        ('libcore', default_git_revision, 'b7ff0ee', '0003_android_libcore_cpu_adjust.diff'),
     "Freeme/platforms/android-25/anbox/platform/packages":
-        ('package', default_git_revision, '8da9f03', '0004_android_packages_all.diff'),
+        ('packages', default_git_revision, '8da9f03', '0004_android_packages_all.diff'),
     "Freeme/platforms/android-25/anbox/platform/vendor/anbox":
-        ('vendor-anbox', default_git_revision, 'db06c81', '0005_android_vendor_anbox_config.diff'),
+        ('vendor/anbox', default_git_revision, 'db06c81', '0005_android_vendor_anbox_config.diff'),
 
     # repositories for clone
     "Freeme/platforms/android-25/anbox/platform/vendor/cmcc": ("vendor/cmcc", default_git_revision),
@@ -88,6 +72,8 @@ git_projects_dict = {
         ("vendor/cmcc/packages/apps/CmccSetupWizard", release_git_revision),
     "Freeme/platforms/common/apps/FreemeWallpaperPicker":
         ("vendor/cmcc/packages/apps/CmccWallpaperPicker", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeContacts":
+        ("vendor/cmcc/packages/apps/CmccContacts", release_git_revision),
     "Freeme/platforms/common/apps/FreemeGameMode":
         ("vendor/cmcc/packages/apps/CmccGameMode", release_git_revision),
     "Freeme/platforms/common/apps/FreemeAppLock":
@@ -258,15 +244,15 @@ def create_diff(git_pro):
     if not isinstance(git_pro, GitProjectInfo):
         logging.error("%s is not GitProjects class".format(git_pro))
     else:
-        logging.debug("git project: {}".format(git_pro))
+        logging.debug("create diff, git project: {}".format(git_pro))
         path = git_pro.path
         repo = Repo(path)
         commit_last = repo.commit(git_pro.diff_id)
         patch_file = git_pro.diff_name
         logging.info("write diff to patch file: {}".format(patch_file))
-
         with open(patch_file, 'wt') as f:
-            f.write(repo.git.diff(commit_last.hexsha))
+            f.write(repo.git.diff(commit_last.hexsha, '--binary'))
+            f.write("\n\n")
 
 
 def git_clone(git_pro):
@@ -280,8 +266,13 @@ def git_clone(git_pro):
         return False
     else:
         path = git_pro.path
-        Repo.clone_from(git_pro.url, path, branch=git_pro.revision,
-                        multi_options=['--single-branch'])
+        # if not verbose, the patch folder have been deleted when check_path()
+        if verbose and os.path.exists(path):
+            logging.debug("debug mode, and git repository exists, no clone")
+        else:
+            logging.info("git clone: {}".format(git_pro))
+            Repo.clone_from(git_pro.url, path, branch=git_pro.revision,
+                            multi_options=['--single-branch'])
         return True
 
 
@@ -296,12 +287,16 @@ def remove_folder(dest_path, folder_name):
 
 def create_patch():
     items = git_projects_dict.items()
+    if verbose:
+        items = git_projects_dict_test.items()
     for repository_name, git_info in items:
+        dest_folder = os.path.normpath(os.path.join(os.path.abspath(dest_out), git_info[0]))
         if len(git_info) > 2:
+            # if git_info length > 2, this repository need create diff patch.
             source_folder = os.path.normpath(os.path.join(os.path.abspath(dest_source), git_info[0]))
-            diff_file = os.path.normpath(os.path.join(os.path.abspath(dest_out), git_info[3]))
-            logging.info("clone {} to {}, revision: {}, then create diff to {}"
-                         .format(repository_name, source_folder, git_info[1], diff_file))
+            if not os.path.exists(dest_folder):
+                os.makedirs(dest_folder, 0o777, True)
+            diff_file = os.path.normpath(os.path.join(os.path.abspath(dest_folder), git_info[3]))
             git_project_info = GitProjectInfo(source_folder, repository_name, git_info[1], git_user,
                                               git_info[2], diff_file)
             if git_clone(git_project_info):
@@ -309,22 +304,9 @@ def create_patch():
             else:
                 logging.error("clone {} failed".format(repository_name))
         else:
-            dest_folder = os.path.normpath(os.path.join(os.path.abspath(dest_out), git_info[0]))
-            logging.info("clone {} to {}, revision: {}".format(repository_name, dest_folder, git_info[1]))
             git_project_info = GitProjectInfo(dest_folder, repository_name, git_info[1], git_user)
             if not git_clone(git_project_info):
                 logging.error("clone failed")
-    # external_item = external_project_dict.items()
-    # for external_name, external_git in external_item:
-    #     external_folder_name = external_git[0]
-    #     source_folder = os.path.normpath(os.path.join(os.path.abspath(dest_source), external_folder_name))
-    #     dest_folder = os.path.normpath(os.path.join(os.path.abspath(dest_out), external_folder_name, "sccontrol"))
-    #     git_project_info = GitProjectInfo(source_folder, external_name, external_git[1], git_user)
-    #     logging.info("clone {} to {}, revision: {}".format(external_name, dest_folder, external_git[1]))
-    #     git_clone(git_project_info)
-    #     sccontrol_folder = os.path.normpath(os.path.join(os.path.abspath(source_folder), "sccontrol"))
-    #     logging.info("copy {} to {}".format(sccontrol_folder, dest_folder))
-    #     shutil.copytree(sccontrol_folder, dest_folder)
 
 
 def check_path():
@@ -336,11 +318,11 @@ def check_path():
     dest_out = os.path.normpath(os.path.join(os.path.abspath(dest), "out"))
     if os.path.exists(dest):
         if not verbose:
-            if show_choose("override patch folder {}?".format(dest)):
+            if force or show_choose("override patch folder {}?".format(dest)):
                 logging.info("delete {}".format(dest))
                 shutil.rmtree(dest)
         else:
-            shutil.rmtree(dest)
+            logging.debug("just test, do not delete folder")
     os.makedirs(dest_source, 0o777, True)
     os.makedirs(dest_out, 0o777, True)
     logging.info("create patch to {}".format(dest_out))
