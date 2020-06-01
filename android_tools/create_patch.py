@@ -24,6 +24,7 @@ default_git_revision = 'cmcc_dev'
 release_git_revision = 'REL/cmcc_dev'
 
 git_user = ''
+list_repo = ''
 
 git_projects_dict_test = {
     "Freeme/platforms/android-25/anbox/platform/external":
@@ -217,6 +218,8 @@ class GitProjectInfo:
 def parse_args():
     parser = argparse.ArgumentParser(description='create patch for cmcc branch')
     parser.add_argument('-v', dest='verbose', action='store_true', help='verbose mode')
+    parser.add_argument('-l', dest='list', action='store_true',
+                        help='list patched repository')
     parser.add_argument('-f', dest='force', action='store_true',
                         help='force create patch even patch file exist')
     # parser.add_argument('-s', '--source', metavar='source_path', required=True,
@@ -289,12 +292,16 @@ def git_clone(git_pro):
         return True
 
 
-def remove_folder(dest_path, folder_name):
+def remove_folder(dest_path, folder_name, file_name):
     for root, dirs, files in os.walk(dest_path):
         for dir_n in dirs:
             if dir_n == folder_name:
                 logging.debug("remove: {}".format(os.path.join(root, dir_n)))
                 shutil.rmtree(os.path.join(root, dir_n))
+        for file in files:
+            if file == file_name:
+                logging.debug("remove {}".format(os.path.join(root, file)))
+                os.remove(os.path.join(root, file))
     return True
 
 
@@ -348,7 +355,24 @@ def main():
     create_patch()
 
     # remove .git folder
-    remove_folder(dest_out, ".git")
+    remove_folder(dest_out, ".git", '.gitignore')
+
+
+def list_repository():
+    diff_repo = []
+    clone_repo = []
+    items = git_projects_dict.items()
+    for repository_name, git_info in items:
+        if len(git_info) > 2:
+            diff_repo.append(repository_name)
+        else:
+            clone_repo.append(repository_name)
+    logging.info("diff repositories:")
+    for diff in diff_repo:
+        logging.info("    {}".format(diff))
+    logging.info("clone repositories:")
+    for clone in clone_repo:
+        logging.info("    {}".format(clone))
 
 
 if __name__ == '__main__':
@@ -357,6 +381,7 @@ if __name__ == '__main__':
     verbose = args.verbose
     force = args.force
     git_user = args.git_user
+    list_repo = args.list
     logging.basicConfig(
         # filename="create_patch.log",
         # filemode='a',
@@ -367,6 +392,9 @@ if __name__ == '__main__':
         logging.getLogger().level = logging.DEBUG
 
     start_time = time.time()
-    main()
+    if list_repo:
+        list_repository()
+    else:
+        main()
     end_time = time.time()
     logging.info("create patch use time {}ms".format(end_time - start_time))
