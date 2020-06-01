@@ -3,6 +3,7 @@ import logging
 import os
 import os.path
 import shutil
+import time
 
 from git import Repo
 
@@ -365,4 +366,7 @@ if __name__ == '__main__':
     if verbose:
         logging.getLogger().level = logging.DEBUG
 
+    start_time = time.time()
     main()
+    end_time = time.time()
+    logging.info("create patch use time {}ms".format(end_time - start_time))
