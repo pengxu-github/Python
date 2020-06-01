@@ -45,8 +45,10 @@ git_projects_dict = {
         ('libcore', default_git_revision, 'b7ff0ee', '0003_android_libcore_cpu_adjust.diff'),
     "Freeme/platforms/android-25/anbox/platform/packages":
         ('packages', default_git_revision, '8da9f03', '0004_android_packages_all.diff'),
-    "Freeme/platforms/android-25/anbox/platform/vendor/anbox":
-        ('vendor/anbox', default_git_revision, 'db06c81', '0005_android_vendor_anbox_config.diff'),
+    "Freeme/platforms/android-25/anbox/platform/system":
+        ('system', default_git_revision, 'a4947e5', '0005_android_system_all.diff'),
+    # "Freeme/platforms/android-25/anbox/platform/vendor/anbox":
+    #     ('vendor/anbox', default_git_revision, 'db06c81', '0005_android_vendor_anbox_config.diff'),
 
     # repositories for clone
     "Freeme/platforms/android-25/anbox/platform/vendor/cmcc": ("vendor/cmcc", default_git_revision),
@@ -74,12 +76,18 @@ git_projects_dict = {
         ("vendor/cmcc/packages/apps/CmccWallpaperPicker", release_git_revision),
     "Freeme/platforms/common/apps/FreemeContacts":
         ("vendor/cmcc/packages/apps/CmccContacts", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeMessaging":
+        ("vendor/cmcc/packages/apps/CmccMessaging", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeDialer":
+        ("vendor/cmcc/packages/apps/CmccDialer", release_git_revision),
     "Freeme/platforms/common/apps/FreemeGameMode":
         ("vendor/cmcc/packages/apps/CmccGameMode", release_git_revision),
     "Freeme/platforms/common/apps/FreemeAppLock":
         ("vendor/cmcc/packages/apps/CmccAppLock", release_git_revision),
     "Freeme/platforms/common/apps/FreemeOneHand":
         ("vendor/cmcc/packages/apps/CmccOneHand", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeYellowPageLite":
+        ("vendor/cmcc/packages/apps/CmccYellowPageLite", release_git_revision),
     "Freeme/platforms/common/apps/FreemeGallery":
         ("vendor/cmcc/packages/apps/CmccGallery", "cmcc-release"),
     "Freeme/platforms/common/apps/FreemeMultiApp":
@@ -88,6 +96,10 @@ git_projects_dict = {
         ("vendor/cmcc/packages/apps/CmccTTS", release_git_revision),
     "Freeme/platforms/common/apps/FreemeSuperShot":
         ("vendor/cmcc/packages/apps/CmccSuperShot", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeLogger":
+        ("vendor/cmcc/packages/apps/CmccLogger", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeVAssistant":
+        ("vendor/cmcc/packages/apps/CmccVAssistant", "REL/main_cmcc"),
     "Freeme/platforms/common/3rd-apps/cmcc":
         ("vendor/cmcc/packages/3rd-apps", "release"),
     "FreemeLite/products/FreemeLite/apps":
