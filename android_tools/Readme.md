@@ -1,118 +1,173 @@
 ## 云手机代码 patch 生成脚本
-
-## 脚本逻辑
+[TOC]
 
 自动生成 patch 的脚本基于 python3 实现，主要用到了 gitpython 库，使用之前需要将对应的库 install。`pip3 install gitpython`，如果出现库找不到的错误，使用 pip3 安装一下即可。
 
-脚本分为两个部分，一是需要生成 xxx.diff 的仓库，另一个是直接整个目录 clone 即可的仓库。
-
-### 生成 xxx.diff
-
-- 根据 -g 参数传入的仓库名字以及 -s 传入的 source path，使用 ` git diff` 命令生成。因此在使用此脚本之前需要本地下载好源码仓库，比如  `android-25/ROBOX/cmcc-7.1.1_dev.xml` 源码。
-- 如果有新的仓库需要生成 diff patch，那么需要在脚本中增加已经定义的目录的
-
-```python
-diff_repository = {
-    'build',
-    'frameworks',
-    'vendor',
-}
-
-diff_repository_info = {
-    'build': ('cf0fe8f', '0001-android-build-mk.diff'),
-    'frameworks': ('5c49b1fe', '0002-android-frameworks-all.diff'),
-    'vendor': ('f37b7ad', '0003-android-vendor-anboxconfig.diff')
-}
-```
-
-
-
-### 整个仓库 clone
-
-- 需要整个仓库 clone 的仓库已经定义在脚本中，如果有新增，那么需要同步修改脚本中的定义。
-
-```python
-git_projects = [
-    "Freeme/platforms/common/vendor/cmcc",
-    "Freeme/platforms/common/apps/FreemeSystemUI",
-    "Freeme/platforms/common/apps/FreemeSettings",
-    "Freeme/platforms/common/apps/FreemeFileManager",
-    "Freeme/platforms/common/apps/FreemeCalculator",
-    "Freeme/platforms/common/apps/FreemeVideo",
-    "Freeme/platforms/common/apps/FreemeScreenRecorder",
-    "Freeme/platforms/common/apps/FreemeSuperShot",
-    "Freeme/platforms/common/apps/FreemeSoundRecorder",
-    "Freeme/platforms/common/apps/FreemeTTS",
-    "Freeme/platforms/common/apps/FreemeMusic",
-    "Freeme/platforms/common/apps/FreemeDeskClock",
-    "Freeme/platforms/common/apps/FreemeGameMode",
-    "Freeme/platforms/common/apps/FreemeOneHand",
-    "Freeme/platforms/common/apps/FreemeAppLock",
-    "Freeme/platforms/common/apps/FreemeGallery"
-]
-
-git_projects_dict = {
-    "Freeme/platforms/common/vendor/cmcc": ("vendor/cmcc", "cmcc-7.1.1_publ"),
-    "Freeme/platforms/common/apps/FreemeSystemUI":
-        ("vendor/cmcc/packages/apps/CmccSystemUI", "cmcc-7.1.1_master-publ"),
-    "Freeme/platforms/common/apps/FreemeSettings":
-        ("vendor/cmcc/packages/apps/CmccSettings", "cmcc-7.1.1_master-release"),
-    "Freeme/platforms/common/apps/FreemeFileManager":
-        ("vendor/cmcc/packages/apps/CmccFileManager", "cmcc-7.1.1_publ",),
-    "Freeme/platforms/common/apps/FreemeCalculator":
-        ("vendor/cmcc/packages/apps/CmccCalculator", "cmcc-7.1.1_publ",),
-    "Freeme/platforms/common/apps/FreemeVideo":
-        ("vendor/cmcc/packages/apps/CmccVideo", "cmcc-7.1.1_publ",),
-    "Freeme/platforms/common/apps/FreemeScreenRecorder":
-        ("vendor/cmcc/packages/apps/CmccScreenRecorder", "cmcc-7.1.1_publ"),
-    "Freeme/platforms/common/apps/FreemeSuperShot":
-        ("vendor/cmcc/packages/apps/CmccSuperShot", "REL/cmcc-7.1.1_dev"),
-    "Freeme/platforms/common/apps/FreemeSoundRecorder":
-        ("vendor/cmcc/packages/apps/CmccSoundRecorder", "cmcc-7.1.1_publ"),
-    "Freeme/platforms/common/apps/FreemeTTS": ("vendor/cmcc/packages/apps/CmccTTS", "REL/cmcc"),
-    "Freeme/platforms/common/apps/FreemeMusic":
-        ("vendor/cmcc/packages/apps/CmccMusic", "cmcc-7.1.1_publ"),
-    "Freeme/platforms/common/apps/FreemeDeskClock":
-        ("vendor/cmcc/packages/apps/CmccDeskClock", "cmcc-7.1.1_publ"),
-    "Freeme/platforms/common/apps/FreemeGameMode":
-        ("vendor/cmcc/packages/apps/CmccGameMode", "cmcc-7.1.1_release"),
-    "Freeme/platforms/common/apps/FreemeOneHand":
-        ("vendor/cmcc/packages/apps/CmccOneHand", "cmcc-7.1.1_release"),
-    "Freeme/platforms/common/apps/FreemeAppLock":
-        ("vendor/cmcc/packages/apps/CmccAppLock", "cmcc-7.1.1_release"),
-    "Freeme/platforms/common/apps/FreemeGallery":
-        ("vendor/cmcc/packages/apps/CmccGallery", "cmcc-release")
-}
-```
-
-
-
-
-
-## 执行方式
+## 执行
 
 ```shell
-python3 create_patch.py -f -v -s /mnt/freemeos-code/robox-cmcc/dev/ -d /mnt/freemeos-code/robox-cmcc/patch-test/ -g build -g frameworks -g vendor -u xupeng
+python3 create_patch.py -f -d /mnt/freemeos-code/robox-cmcc/patch-test/ -u xupeng
 ```
 
 各个参数的含义可以查看 help `python3 create_patch.py -h`
 
 ```
-usage: create_patch.py [-h] [-v] [-f] -s source path -d dest path -u git user
-                       name -g git repository name
+usage: create_patch.py [-h] [-v] [-l] [-f] -d dest_path -u git_user_name
 
 create patch for cmcc branch
 
 optional arguments:
   -h, --help            show this help message and exit
   -v                    verbose mode
-  -f                    forec create patch even patch file exist
-  -s source path, --source source path
+  -l                    list patched repository
+  -f                    force create patch even patch file exist
+  -d dest_path, --dest dest_path
                         absolute path of repo repository
-  -d dest path, --dest dest path
+  -u git_user_name, --git_user git_user_name
                         absolute path of repo repository
-  -u git user name, --git_user git user name
-                        absolute path of repo repository
-  -g git repository name
-                        folder name of git repository
 ```
+
+在执行脚本前需要检查需要制作 patch 的仓库是否有变动，如果有的话需要同步修改脚本。
+
+```python
+git_projects_dict = {
+    # repositories for diff
+    "Freeme/platforms/android-25/anbox/platform/build":
+        ('build', default_git_revision, 'b617dfd', '0001_android_build_mk.diff'),
+    "Freeme/platforms/android-25/anbox/platform/external":
+        ("external", default_git_revision, 'f8d3006c2c', '0006_android_external_sccontrol.diff'),
+    "Freeme/platforms/android-25/anbox/platform/frameworks":
+        ('frameworks', default_git_revision, 'daedb26', '0002_android_frameworks_all.diff'),
+    "Freeme/platforms/android-25/anbox/platform/libcore":
+        ('libcore', default_git_revision, 'b7ff0ee', '0003_android_libcore_cpu_adjust.diff'),
+    "Freeme/platforms/android-25/anbox/platform/packages":
+        ('packages', default_git_revision, '8da9f03', '0004_android_packages_all.diff'),
+    "Freeme/platforms/android-25/anbox/platform/system":
+        ('system', default_git_revision, 'a4947e5', '0005_android_system_all.diff'),
+    # "Freeme/platforms/android-25/anbox/platform/vendor/anbox":
+    #     ('vendor/anbox', default_git_revision, 'db06c81', '0005_android_vendor_anbox_config.diff'),
+
+    # repositories for clone
+    "Freeme/platforms/android-25/anbox/platform/vendor/cmcc": ("vendor/cmcc", default_git_revision),
+    "Freeme/platforms/common/apps/FreemeSettings":
+        ("vendor/cmcc/packages/apps/CmccSettings", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeSystemUI":
+        ("vendor/cmcc/packages/apps/CmccSystemUI", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeFileManager":
+        ("vendor/cmcc/packages/apps/CmccFileManager", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeCalculator":
+        ("vendor/cmcc/packages/apps/CmccCalculator", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeVideo":
+        ("vendor/cmcc/packages/apps/CmccVideo", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeScreenRecorder":
+        ("vendor/cmcc/packages/apps/CmccScreenRecorder", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeSoundRecorder":
+        ("vendor/cmcc/packages/apps/CmccSoundRecorder", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeMusic":
+        ("vendor/cmcc/packages/apps/CmccMusic", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeDeskClock":
+        ("vendor/cmcc/packages/apps/CmccDeskClock", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeSetupWizard":
+        ("vendor/cmcc/packages/apps/CmccSetupWizard", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeWallpaperPicker":
+        ("vendor/cmcc/packages/apps/CmccWallpaperPicker", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeContacts":
+        ("vendor/cmcc/packages/apps/CmccContacts", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeMessaging":
+        ("vendor/cmcc/packages/apps/CmccMessaging", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeDialer":
+        ("vendor/cmcc/packages/apps/CmccDialer", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeGameMode":
+        ("vendor/cmcc/packages/apps/CmccGameMode", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeAppLock":
+        ("vendor/cmcc/packages/apps/CmccAppLock", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeOneHand":
+        ("vendor/cmcc/packages/apps/CmccOneHand", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeYellowPageLite":
+        ("vendor/cmcc/packages/apps/CmccYellowPageLite", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeGallery":
+        ("vendor/cmcc/packages/apps/CmccGallery", "cmcc-release"),
+    "Freeme/platforms/common/apps/FreemeMultiApp":
+        ("vendor/cmcc/packages/apps/CmccMultiApp", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeTTS":
+        ("vendor/cmcc/packages/apps/CmccTTS", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeSuperShot":
+        ("vendor/cmcc/packages/apps/CmccSuperShot", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeLogger":
+        ("vendor/cmcc/packages/apps/CmccLogger", release_git_revision),
+    "Freeme/platforms/common/apps/FreemeVAssistant":
+        ("vendor/cmcc/packages/apps/CmccVAssistant", "REL/main_cmcc"),
+    "Freeme/platforms/common/3rd-apps/cmcc":
+        ("vendor/cmcc/packages/3rd-apps", "release"),
+    "FreemeLite/products/FreemeLite/apps":
+        ("vendor/cmcc/packages/apps/freemelite", "cn_standard_cloud"),
+    "Freeme/platforms/common/core/freeme-services":
+        ("vendor/cmcc/frameworks/base/services/cmcc-services", "REL/cmcc")
+}
+"""
+git repositories info.
+
+key is repository name;
+
+value is relative path, git revision, if repository for diff, 
+commit id to diff and diff patch file name define.
+"""
+```
+
+## 脚本逻辑
+脚本的主逻辑函数如下：
+
+```pyhton
+def main():
+    # check destination path
+    check_path()
+
+    create_patch()
+
+    # remove .git folder
+    remove_folder(dest_out, ".git", '.gitignore')
+```
+
+可以看到，脚本分为三个部分，
+
+- 根据输入的参数检查路径
+- 生成脚本
+    - 生成 xxx.diff
+    - clone 仓库
+- 删除 .git 和 .gitignore
+
+这里主要介绍一下生成脚本的方案，代码如下：
+
+```python
+def create_patch():
+    items = git_projects_dict.items()
+    if verbose:
+        items = git_projects_dict_test.items()
+    for repository_name, git_info in items:
+        dest_folder = os.path.normpath(os.path.join(os.path.abspath(dest_out), git_info[0]))
+        if len(git_info) > 2:
+            # if git_info length > 2, this repository need create diff patch.
+            source_folder = os.path.normpath(os.path.join(os.path.abspath(dest_source), git_info[0]))
+            if not os.path.exists(dest_folder):
+                os.makedirs(dest_folder, 0o777, True)
+            diff_file = os.path.normpath(os.path.join(os.path.abspath(dest_folder), git_info[3]))
+            git_project_info = GitProjectInfo(source_folder, repository_name, git_info[1], git_user,
+                                              git_info[2], diff_file)
+            if git_clone(git_project_info):
+                create_diff(git_project_info)
+            else:
+                logging.error("clone {} failed".format(repository_name))
+        else:
+            git_project_info = GitProjectInfo(dest_folder, repository_name, git_info[1], git_user)
+            if not git_clone(git_project_info):
+                logging.error("clone failed")
+```
+
+方案思路是通过识别 `git_projects_dict` 的 value 值的长度，需要 clone 的仓库只需要路径和分支两个参数，而需要制作 diff 的仓库需要额外初始节点和 patch 名字两个参数。两者结构如下所示：
+
+```
+diff:  repository_name: (patch, branch, origin_commit, patch_name)
+clone: repository_name: (patch, branch）
+```
+
+diff 采用的方法：`git diff f8d3006c2c --binary > xxx.diff`
