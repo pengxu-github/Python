@@ -82,6 +82,8 @@ git_projects_dict = {
         ("vendor/cmcc/packages/apps/CmccMessaging", release_git_revision),
     "Freeme/platforms/common/apps/FreemeDialer":
         ("vendor/cmcc/packages/apps/CmccDialer", release_git_revision),
+    "Freeme/platforms/common/apps/CmccLauncher":
+        ("vendor/cmcc/packages/apps/CmccLauncher", release_git_revision),
     "Freeme/platforms/common/apps/FreemeGameMode":
         ("vendor/cmcc/packages/apps/CmccGameMode", release_git_revision),
     "Freeme/platforms/common/apps/FreemeAppLock":
