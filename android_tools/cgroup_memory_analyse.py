@@ -1,3 +1,4 @@
+import multiprocessing
 import subprocess
 import matplotlib.pyplot as plt
 
@@ -62,3 +63,4 @@ def get_memory_and_draw():
 if __name__ == '__main__':
     total = get_node_num(command_total)
     get_memory_and_draw()
+    print("cpu count: %d" % multiprocessing.cpu_count())
