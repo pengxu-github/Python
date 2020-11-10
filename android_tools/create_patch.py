@@ -232,7 +232,7 @@ def parse_args():
                         help='absolute path of repo repository')
     parser.add_argument('-u', '--git_user', metavar='git_user_name', required=True,
                         dest='git_user', action='store',
-                        help='absolute path of repo repository')
+                        help='user name of git')
     return parser.parse_args()
 
 
