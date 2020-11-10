@@ -1,0 +1,30 @@
+# driver
+08-23 22:35:27.098  3742  3767 I DisplayPowerController: Unblocked screen on after 283 ms
+08-23 22:35:28.528  3742  3767 I DisplayPowerController: Unblocked screen on after 283 ms
+08-23 22:35:29.835  3742  3767 I DisplayPowerController: Unblocked screen on after 283 ms
+08-23 22:35:31.149  3742  3767 I DisplayPowerController: Unblocked screen on after 341 ms
+08-23 22:35:32.515  3742  3767 I DisplayPowerController: Unblocked screen on after 270 ms
+08-23 22:35:33.957  3742  3767 I DisplayPowerController: Unblocked screen on after 271 ms
+08-23 22:35:35.202  3742  3767 I DisplayPowerController: Unblocked screen on after 276 ms
+08-23 22:35:36.534  3742  3767 I DisplayPowerController: Unblocked screen on after 278 ms
+08-23 22:35:38.007  3742  3767 I DisplayPowerController: Unblocked screen on after 289 ms
+08-23 22:35:39.361  3742  3767 I DisplayPowerController: Unblocked screen on after 278 ms
+08-23 22:35:40.770  3742  3767 I DisplayPowerController: Unblocked screen on after 284 ms
+08-23 22:35:42.152  3742  3767 I DisplayPowerController: Unblocked screen on after 293 ms
+08-23 22:35:43.480  3742  3767 I DisplayPowerController: Unblocked screen on after 293 ms
+
+# prod
+11-01 00:07:08.480  4046  4076 I DisplayPowerController: Unblocked screen on after 484 ms
+11-01 00:07:32.037  4046  4076 I DisplayPowerController: Unblocked screen on after 450 ms
+11-01 00:07:34.039  4046  4076 I DisplayPowerController: Unblocked screen on after 434 ms
+11-01 00:07:36.138  4046  4076 I DisplayPowerController: Unblocked screen on after 462 ms
+11-01 00:07:41.360  4046  4076 I DisplayPowerController: Unblocked screen on after 435 ms
+11-01 00:07:47.475  4046  4076 I DisplayPowerController: Unblocked screen on after 493 ms
+11-01 00:07:49.432  4046  4076 I DisplayPowerController: Unblocked screen on after 487 ms
+11-01 00:07:51.232  4046  4076 I DisplayPowerController: Unblocked screen on after 499 ms
+11-01 00:07:53.138  4046  4076 I DisplayPowerController: Unblocked screen on after 485 ms
+11-01 00:07:55.003  4046  4076 I DisplayPowerController: Unblocked screen on after 484 ms
+11-01 00:07:57.041  4046  4076 I DisplayPowerController: Unblocked screen on after 435 ms
+11-01 00:07:58.902  4046  4076 I DisplayPowerController: Unblocked screen on after 433 ms
+11-01 00:08:00.854  4046  4076 I DisplayPowerController: Unblocked screen on after 443 ms
+11-01 00:08:02.907  4046  4076 I DisplayPowerController: Unblocked screen on after 468 ms
