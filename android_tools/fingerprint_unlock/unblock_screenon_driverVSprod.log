@@ -13,6 +13,24 @@
 08-23 22:35:42.152  3742  3767 I DisplayPowerController: Unblocked screen on after 293 ms
 08-23 22:35:43.480  3742  3767 I DisplayPowerController: Unblocked screen on after 293 ms
 
+# driver no unlock sound
+08-24 23:43:56.781  3742  3767 I DisplayPowerController: Unblocked screen on after 288 ms
+08-24 23:43:59.136  3742  3767 I DisplayPowerController: Unblocked screen on after 284 ms
+08-24 23:44:02.081  3742  3767 I DisplayPowerController: Unblocked screen on after 294 ms
+08-24 23:44:03.435  3742  3767 I DisplayPowerController: Unblocked screen on after 284 ms
+08-24 23:44:04.761  3742  3767 I DisplayPowerController: Unblocked screen on after 282 ms
+08-24 23:44:06.101  3742  3767 I DisplayPowerController: Unblocked screen on after 282 ms
+08-24 23:44:07.544  3742  3767 I DisplayPowerController: Unblocked screen on after 281 ms
+08-24 23:44:08.953  3742  3767 I DisplayPowerController: Unblocked screen on after 274 ms
+08-24 23:44:10.287  3742  3767 I DisplayPowerController: Unblocked screen on after 272 ms
+08-24 23:44:11.648  3742  3767 I DisplayPowerController: Unblocked screen on after 282 ms
+08-24 23:44:13.120  3742  3767 I DisplayPowerController: Unblocked screen on after 275 ms
+08-24 23:44:14.498  3742  3767 I DisplayPowerController: Unblocked screen on after 284 ms
+08-24 23:44:15.923  3742  3767 I DisplayPowerController: Unblocked screen on after 296 ms
+08-24 23:44:17.392  3742  3767 I DisplayPowerController: Unblocked screen on after 273 ms
+08-24 23:44:18.786  3742  3767 I DisplayPowerController: Unblocked screen on after 275 ms
+08-24 23:44:20.298  3742  3767 I DisplayPowerController: Unblocked screen on after 276 ms
+
 # prod
 11-01 00:07:08.480  4046  4076 I DisplayPowerController: Unblocked screen on after 484 ms
 11-01 00:07:32.037  4046  4076 I DisplayPowerController: Unblocked screen on after 450 ms
@@ -28,3 +46,65 @@
 11-01 00:07:58.902  4046  4076 I DisplayPowerController: Unblocked screen on after 433 ms
 11-01 00:08:00.854  4046  4076 I DisplayPowerController: Unblocked screen on after 443 ms
 11-01 00:08:02.907  4046  4076 I DisplayPowerController: Unblocked screen on after 468 ms
+
+# prod freemelite and origin systemui
+11-01 00:48:44.147  4013  4054 I DisplayPowerController: Unblocked screen on after 390 ms
+11-01 00:48:46.170  4013  4054 I DisplayPowerController: Unblocked screen on after 407 ms
+11-01 00:48:47.948  4013  4054 I DisplayPowerController: Unblocked screen on after 404 ms
+11-01 00:48:49.645  4013  4054 I DisplayPowerController: Unblocked screen on after 401 ms
+11-01 00:48:51.402  4013  4054 I DisplayPowerController: Unblocked screen on after 393 ms
+11-01 00:48:53.210  4013  4054 I DisplayPowerController: Unblocked screen on after 379 ms
+11-01 00:48:55.029  4013  4054 I DisplayPowerController: Unblocked screen on after 375 ms
+11-01 00:48:57.045  4013  4054 I DisplayPowerController: Unblocked screen on after 371 ms
+11-01 00:48:58.727  4013  4054 I DisplayPowerController: Unblocked screen on after 386 ms
+11-01 00:49:00.482  4013  4054 I DisplayPowerController: Unblocked screen on after 357 ms
+11-01 00:49:02.598  4013  4054 I DisplayPowerController: Unblocked screen on after 365 ms
+11-01 00:49:04.412  4013  4054 I DisplayPowerController: Unblocked screen on after 393 ms
+11-01 00:49:06.145  4013  4054 I DisplayPowerController: Unblocked screen on after 393 ms
+11-01 00:49:08.132  4013  4054 I DisplayPowerController: Unblocked screen on after 370 ms
+11-01 00:49:09.746  4013  4054 I DisplayPowerController: Unblocked screen on after 346 ms
+11-01 00:49:11.443  4013  4054 I DisplayPowerController: Unblocked screen on after 406 ms
+11-01 00:49:13.283  4013  4054 I DisplayPowerController: Unblocked screen on after 398 ms
+11-01 00:49:15.145  4013  4054 I DisplayPowerController: Unblocked screen on after 361 ms
+11-01 00:49:19.902  4013  4054 I DisplayPowerController: Unblocked screen on after 391 ms
+11-01 00:49:24.647  4013  4054 I DisplayPowerController: Unblocked screen on after 346 ms
+
+# prod origin systemui and launcher3
+11-01 00:46:08.802  4013  4054 I DisplayPowerController: Unblocked screen on after 368 ms
+11-01 00:46:10.441  4013  4054 I DisplayPowerController: Unblocked screen on after 475 ms
+11-01 00:46:11.987  4013  4054 I DisplayPowerController: Unblocked screen on after 395 ms
+11-01 00:46:13.731  4013  4054 I DisplayPowerController: Unblocked screen on after 419 ms
+11-01 00:46:15.472  4013  4054 I DisplayPowerController: Unblocked screen on after 340 ms
+11-01 00:46:17.572  4013  4054 I DisplayPowerController: Unblocked screen on after 332 ms
+11-01 00:46:19.927  4013  4054 I DisplayPowerController: Unblocked screen on after 354 ms
+11-01 00:46:22.161  4013  4054 I DisplayPowerController: Unblocked screen on after 411 ms
+11-01 00:46:24.410  4013  4054 I DisplayPowerController: Unblocked screen on after 384 ms
+11-01 00:46:26.829  4013  4054 I DisplayPowerController: Unblocked screen on after 340 ms
+11-01 00:46:28.984  4013  4054 I DisplayPowerController: Unblocked screen on after 364 ms
+11-01 00:46:31.050  4013  4054 I DisplayPowerController: Unblocked screen on after 349 ms
+11-01 00:46:33.216  4013  4054 I DisplayPowerController: Unblocked screen on after 413 ms
+11-01 00:46:35.269  4013  4054 I DisplayPowerController: Unblocked screen on after 336 ms
+11-01 00:46:37.551  4013  4054 I DisplayPowerController: Unblocked screen on after 367 ms
+11-01 00:46:39.695  4013  4054 I DisplayPowerController: Unblocked screen on after 364 ms
+11-01 00:46:41.844  4013  4054 I DisplayPowerController: Unblocked screen on after 365 ms
+11-01 00:46:43.971  4013  4054 I DisplayPowerController: Unblocked screen on after 386 ms
+11-01 00:46:46.055  4013  4054 I DisplayPowerController: Unblocked screen on after 354 ms
+
+# prod origin systemui and launcher3, no unlock sound
+11-01 00:55:42.641  4013  4054 I DisplayPowerController: Unblocked screen on after 359 ms
+11-01 00:55:45.761  4013  4054 I DisplayPowerController: Unblocked screen on after 337 ms
+11-01 00:55:48.180  4013  4054 I DisplayPowerController: Unblocked screen on after 331 ms
+11-01 00:55:51.498  4013  4054 I DisplayPowerController: Unblocked screen on after 399 ms
+11-01 00:55:54.231  4013  4054 I DisplayPowerController: Unblocked screen on after 342 ms
+11-01 00:55:57.452  4013  4054 I DisplayPowerController: Unblocked screen on after 380 ms
+11-01 00:56:00.572  4013  4054 I DisplayPowerController: Unblocked screen on after 338 ms
+11-01 00:56:03.091  4013  4054 I DisplayPowerController: Unblocked screen on after 353 ms
+11-01 00:56:05.799  4013  4054 I DisplayPowerController: Unblocked screen on after 335 ms
+11-01 00:56:08.554  4013  4054 I DisplayPowerController: Unblocked screen on after 331 ms
+11-01 00:56:11.462  4013  4054 I DisplayPowerController: Unblocked screen on after 354 ms
+11-01 00:56:14.320  4013  4054 I DisplayPowerController: Unblocked screen on after 334 ms
+11-01 00:56:16.696  4013  4054 I DisplayPowerController: Unblocked screen on after 355 ms
+11-01 00:56:18.988  4013  4054 I DisplayPowerController: Unblocked screen on after 333 ms
+11-01 00:56:21.212  4013  4054 I DisplayPowerController: Unblocked screen on after 364 ms
+11-01 00:56:23.497  4013  4054 I DisplayPowerController: Unblocked screen on after 350 ms
+11-01 00:56:28.167  4013  4054 I DisplayPowerController: Unblocked screen on after 346 ms

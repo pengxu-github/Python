@@ -24,9 +24,10 @@ def parse_line(line):
     after_index = line.index('after')
     if after_index > 0:
         time_use = trim_space(line[after_index + 5:])
-        logging.debug("time use: {}".format(time_use))
+        # logging.debug("time use: {}".format(time_use))
         return trim_space(time_use.split(' ')[0])
     else:
+        logging.error("log format error, can not find 'after', {}".format(line))
         return 0
 
 
