@@ -1,6 +1,8 @@
 import datetime
+import logging
 import multiprocessing
 import os
+import shutil
 import time
 
 
@@ -49,3 +51,28 @@ def screenshot():
     os.system('adb shell screencap -p /sdcard/sh.png')
     os.system('adb pull /sdcard/sh.png .')
     return "sh.png"
+
+
+def remove_folder(dest_path, folder_name, file_name):
+    for root, dirs, files in os.walk(dest_path):
+        for dir_n in dirs:
+            if dir_n == folder_name:
+                logging.debug("remove: {}".format(os.path.join(root, dir_n)))
+                shutil.rmtree(os.path.join(root, dir_n))
+        for file in files:
+            if file == file_name:
+                logging.debug("remove {}".format(os.path.join(root, file)))
+                os.remove(os.path.join(root, file))
+    return True
+
+
+def create_path(path: str, force: bool):
+    """
+    create the destination folder of patch
+    """
+    if os.path.exists(path):
+        if force:
+            logging.info("delete {}".format(path))
+            shutil.rmtree(path)
+    os.makedirs(path, 0o777, True)
+    logging.info("path {} created".format(path))
