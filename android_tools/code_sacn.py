@@ -1,6 +1,8 @@
 import argparse
 import logging
 import os
+import shutil
+import time
 
 from git import Repo
 
@@ -12,9 +14,14 @@ git_revision = "freeme-11.0.0_master"
 default_git_revision = "freeme-11.0.0_master-t610"
 git_revision_app = "freeme-11.0.0_master-sprd"
 statistics_dict = {}
+rm_files = ("so", "jar", "jpg", "png", "zip", "gz", "ogg", "bat",
+            "db", "lic", "apk", "ttf", "pdf", "mp4", "tflite",
+            "pk8", "pem", "txt", "remove_me", "dummy", "dummy_files",
+            "gradlew")
+rm_folders = (".git", "BaiduLocation", "SprdSignApks")
 
 git_projects_dict = {
-    # repositories for clone
+    # 11.0
     "Freeme/platforms/common/vendor/freeme":
         ("vendor/freeme", default_git_revision),
     "Freeme/platforms/common/apps/FreemeAppLock":
@@ -39,12 +46,8 @@ git_projects_dict = {
         ("vendor/freeme/packages/apps/FreemeAgingTool", "REL/main-30"),
     "Freeme/platforms/common/apps/FreemeGallery":
         ("vendor/freeme/packages/apps/FreemeGallery", "all-master"),
-    "Freeme/platforms/common/apps/FreemeCamera2":
-        ("vendor/freeme/packages/apps/FreemeCamera2", "r-main_sprd"),
     "Freeme/platforms/common/apps/FreemeCalculator":
         ("vendor/freeme/packages/apps/FreemeCalculator", "freeme11"),
-    # "Freeme/platforms/common/apps/FreemeVAssistant":
-    #     ("vendor/freeme/packages/apps/FreemeVAssistant", "freeme11"),
     "Freeme/platforms/common/apps/FreemeSuperShot":
         ("vendor/freeme/packages/apps/FreemeSuperShot", "freeme11"),
     "Freeme/platforms/common/apps/FreemeSetupWizard":
@@ -60,7 +63,11 @@ git_projects_dict = {
     "Freeme/platforms/common/apps/FreemeFaceService":
         ("vendor/freeme/packages/apps/FreemeFaceService", "sensetime"),
     "Freeme/platforms/common/apps/FreemeMultiWindow":
-        ("vendor/freeme/packages/apps/FreemeMultiWindow", "main")
+        ("vendor/freeme/packages/apps/FreemeMultiWindow", "main"),
+    # vmic
+    "Freeme/platforms/common/manbox/vmic": ("vendor/freeme/system/vmic", "cmcc_dev"),
+    "Freeme/FreemeDEV/products/RemoteOperation":
+        ("vendor/freeme/packages/apps/VmicRemoteOperation", "main")
 }
 """
 git repositories info.
@@ -102,7 +109,7 @@ def git_clone(git_pro):
         if verbose and os.path.exists(path):
             logging.debug("debug mode, and git repository exists, no clone")
         else:
-            logging.info("git clone: {}".format(git_pro))
+            # logging.info("git clone: {}".format(git_pro))
             Repo.clone_from(git_pro.url, path, branch=git_pro.revision,
                             multi_options=['--single-branch'])
         return True
@@ -117,21 +124,30 @@ def do_clone():
             logging.error("clone failed")
 
 
+def copy_others():
+    shutil.copytree("/home/xupeng/work/code/EAL4/FreemeCamera",
+                    os.path.join(dest, "vendor/freeme/packages/apps/FreemeCamera2"))
+
+
 def do_statistics():
     logging.debug("do statistics of {}".format(dest))
     for root, dirs, files in os.walk(dest):
         for file in files:
             file_splits = file.split(".")
-            if len(file_splits) > 1:
-                file_suffix = file_splits[-1]
+            file_suffix = file_splits[-1]
+            if file_suffix in rm_files:
+                os.remove(os.path.join(root, file))
             else:
-                file_suffix = "no_suffix"
-            abs_file_path = os.path.normpath(os.path.join(root, file))
-            count = statistics_dict.get(file_suffix, [0, 0, []])
-            count[2].append(abs_file_path)
-            statistics_dict[file_suffix] = [count[0] + 1,
-                                            count[1] + os.path.getsize(abs_file_path),
-                                            count[2]]
+                abs_file_path = os.path.normpath(os.path.join(root, file))
+                count = statistics_dict.get(file_suffix, [0, 0, []])
+                count[2].append(abs_file_path)
+                statistics_dict[file_suffix] = [count[0] + 1,
+                                                count[1] + os.path.getsize(abs_file_path),
+                                                count[2]]
+        for dir_name in dirs:
+            abs_path = os.path.join(root, dir_name)
+            if dir_name in rm_folders or not os.listdir(abs_path):
+                shutil.rmtree(abs_path)
 
 
 if __name__ == '__main__':
@@ -149,16 +165,22 @@ if __name__ == '__main__':
     )
     if verbose:
         logging.getLogger().level = logging.DEBUG
-    # android_tools.utils.create_path(dest, force)
-    # do_clone()
+    start_time = time.time()
+    android_tools.utils.create_path(dest, force)
+    do_clone()
+    copy_others()
+    collect_time = time.time()
+    logging.debug("collect code use {}s".format(collect_time - start_time))
     do_statistics()
+    statistics_time = time.time()
+    logging.debug("statistic use {}s".format(statistics_time - collect_time))
 
     statistics_file = os.path.normpath(os.path.join(os.path.abspath(dest), "statistics.txt"))
     statistics_fd = open(statistics_file, "w")
     for key in statistics_dict.keys():
         logging.debug("{} file appears {} times, total size {:.2f}kb"
                       .format(key, statistics_dict[key][0], statistics_dict[key][1] / 1024))
-        summary = ".{} file appears {} times, total size {:.2f}kb:" \
+        summary = "{} file appears {} times, total size {:.2f}kb:" \
             .format(key, statistics_dict[key][0],
                     statistics_dict[key][1] / 1024)
         statistics_fd.writelines(summary)
@@ -168,3 +190,5 @@ if __name__ == '__main__':
             statistics_fd.write(appear)
             statistics_fd.write("\n")
     statistics_fd.close()
+    write_time = time.time()
+    logging.debug("statistics use {}s".format(write_time - statistics_time))
