@@ -7,6 +7,8 @@ import time
 
 from git import Repo
 
+from android_tools.utils import list_repository
+
 verbose = False
 force = False
 dest = ''
@@ -360,23 +362,6 @@ def main():
     remove_folder(dest_out, ".git", '.gitignore')
 
 
-def list_repository():
-    diff_repo = []
-    clone_repo = []
-    items = git_projects_dict.items()
-    for repository_name, git_info in items:
-        if len(git_info) > 2:
-            diff_repo.append(repository_name)
-        else:
-            clone_repo.append(repository_name)
-    logging.info("diff repositories:")
-    for diff in diff_repo:
-        logging.info("    {}".format(diff))
-    logging.info("clone repositories:")
-    for clone in clone_repo:
-        logging.info("    {}".format(clone))
-
-
 if __name__ == '__main__':
     args = parse_args()
     dest = args.dest_path
@@ -395,7 +380,7 @@ if __name__ == '__main__':
 
     start_time = time.time()
     if list_repo:
-        list_repository()
+        list_repository(git_projects_dict)
     else:
         main()
     end_time = time.time()

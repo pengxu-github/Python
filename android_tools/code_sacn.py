@@ -11,31 +11,37 @@ import android_tools.utils
 
 verbose = False
 git_revision = "freeme-11.0.0_master"
-default_git_revision = "freeme-11.0.0_master-t610"
 git_revision_app = "freeme-11.0.0_master-sprd"
 statistics_dict = {}
 rm_files = ("so", "jar", "jpg", "png", "zip", "gz", "ogg", "bat",
-            "db", "lic", "apk", "ttf", "pdf", "mp4", "tflite",
+            "db", "lic", "apk", "ttf", "pdf", "mp3", "mp4", "tflite",
             "pk8", "pem", "txt", "remove_me", "dummy", "dummy_files",
-            "gradlew")
+            "presets_dummy", "gradlew", "jks")
 rm_folders = (".git", "BaiduLocation", "SprdSignApks")
+remove_paths = ("vendor/freeme/packages/apps/FreemeOTA/external",)
 
 git_projects_dict = {
     # 11.0
     "Freeme/platforms/common/vendor/freeme":
-        ("vendor/freeme", default_git_revision),
+        ("vendor/freeme", "freeme-11.0.0_master-t610"),
+    "Freeme/platforms/android-30/SPRD-R0-CY-T610/platform/device_droi":
+        ("vendor/freeme/device/droi", git_revision),
     "Freeme/platforms/common/apps/FreemeAppLock":
         ("vendor/freeme/packages/apps/FreemeAppLock", git_revision),
     "Freeme/platforms/common/apps/FreemeOneHand":
         ("vendor/freeme/packages/apps/FreemeOneHand", git_revision),
     "Freeme/platforms/common/apps/FreemeFileManager":
         ("vendor/freeme/packages/apps/FreemeFileManager", git_revision_app),
+    "Freeme/platforms/common/apps/FreemeMusic":
+        ("vendor/freeme/packages/apps/FreemeMusic", git_revision),
     "Freeme/platforms/common/apps/FreemeVideo":
         ("vendor/freeme/packages/apps/FreemeVideo", git_revision),
     "Freeme/platforms/common/apps/FreemeHongbaoAssistant":
         ("vendor/freeme/packages/apps/FreemeHongbaoAssistant", git_revision),
     "Freeme/platforms/common/apps/FreemeSuperPowerSaver":
         ("vendor/freeme/packages/apps/FreemeSuperPowerSaver", git_revision_app),
+    "Freeme/platforms/common/apps/FreemeSoundRecorder":
+        ("vendor/freeme/packages/apps/FreemeSoundRecorder", git_revision),
     "Freeme/platforms/common/apps/FreemeGameMode":
         ("vendor/freeme/packages/apps/FreemeGameMode", git_revision),
     "Freeme/platforms/common/core/soul":
@@ -44,8 +50,10 @@ git_projects_dict = {
         ("vendor/freeme/packages/apps/FreemeMultiApp", "main-R"),
     "Freeme/platforms/common/apps/FreemeAgingTool":
         ("vendor/freeme/packages/apps/FreemeAgingTool", "REL/main-30"),
-    "Freeme/platforms/common/apps/FreemeGallery":
-        ("vendor/freeme/packages/apps/FreemeGallery", "all-master"),
+    # "Freeme/platforms/common/apps/FreemeGallery":
+    #     ("vendor/freeme/packages/apps/FreemeGallery", "all-master"),
+    # "Freeme/platforms/common/apps/FreemeVAssistant":
+    #     ("vendor/freeme/packages/apps/FreemeVAssistant", "all-master"),
     "Freeme/platforms/common/apps/FreemeCalculator":
         ("vendor/freeme/packages/apps/FreemeCalculator", "freeme11"),
     "Freeme/platforms/common/apps/FreemeSuperShot":
@@ -64,6 +72,15 @@ git_projects_dict = {
         ("vendor/freeme/packages/apps/FreemeFaceService", "sensetime"),
     "Freeme/platforms/common/apps/FreemeMultiWindow":
         ("vendor/freeme/packages/apps/FreemeMultiWindow", "main"),
+    "Freeme/platforms/common/apps/FreemeYellowPageLite":
+        ("vendor/freeme/packages/apps/FreemeYellowPageLite", "REL/main"),
+    "Freeme/platforms/common/apps/FreemeMagnification":
+        ("vendor/freeme/packages/apps/FreemeMagnification", "REL/freeme11"),
+    "Freeme/platforms/common/apps/FreemeMsa":
+        ("vendor/freeme/packages/apps/FreemeMsa", "REL/main"),
+    # care
+    # "Freeme/platforms/common/apps/FreemeHealthAssistant":
+    #     ("vendor/freeme/packages/apps/FreemeHealthAssistant", "main"),
     # vmic
     "Freeme/platforms/common/manbox/vmic": ("vendor/freeme/system/vmic", "cmcc_dev"),
     "Freeme/FreemeDEV/products/RemoteOperation":
@@ -82,9 +99,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description='create patch for cmcc branch')
     parser.add_argument('-v', dest='verbose', action='store_true', help='verbose mode')
     parser.add_argument('-l', dest='list', action='store_true',
-                        help='list patched repository')
+                        help='list cloned repository')
     parser.add_argument('-f', dest='force', action='store_true',
-                        help='force create patch even patch file exist')
+                        help='force remove code folder if exist')
     parser.add_argument('-d', '--dest', metavar='dest_path', required=True,
                         dest='dest_path', action='store',
                         help='absolute path of repo repository')
@@ -124,9 +141,18 @@ def do_clone():
             logging.error("clone failed")
 
 
-def copy_others():
-    shutil.copytree("/home/xupeng/work/code/EAL4/FreemeCamera",
-                    os.path.join(dest, "vendor/freeme/packages/apps/FreemeCamera2"))
+def deal_others():
+    plus_codes = os.path.join(dest, "../plus_codes/")
+    for plus in os.listdir(plus_codes):
+        dest_path = os.path.join(dest, "vendor/freeme/packages/apps", plus)
+        if not os.path.exists(dest_path):
+            shutil.copytree(os.path.join(plus_codes, plus), dest_path)
+
+    for remove_path in remove_paths:
+        abs_remove_path = os.path.join(dest, remove_path)
+        if os.path.exists(abs_remove_path):
+            logging.debug("remove {}".format(abs_remove_path))
+            shutil.rmtree(abs_remove_path)
 
 
 def do_statistics():
@@ -148,6 +174,9 @@ def do_statistics():
             abs_path = os.path.join(root, dir_name)
             if dir_name in rm_folders or not os.listdir(abs_path):
                 shutil.rmtree(abs_path)
+        if not os.listdir(root):
+            logging.debug("remove {}".format(root))
+            os.rmdir(root)
 
 
 if __name__ == '__main__':
@@ -161,28 +190,34 @@ if __name__ == '__main__':
         # filename="create_patch.log",
         # filemode='a',
         level=logging.INFO,
-        format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
+        # format='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
+        format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s'
     )
     if verbose:
         logging.getLogger().level = logging.DEBUG
+    if list_repo:
+        android_tools.utils.list_repository(git_projects_dict)
+        exit(1)
+
     start_time = time.time()
     android_tools.utils.create_path(dest, force)
     do_clone()
-    copy_others()
+    deal_others()
     collect_time = time.time()
     logging.debug("collect code use {}s".format(collect_time - start_time))
     do_statistics()
     statistics_time = time.time()
     logging.debug("statistic use {}s".format(statistics_time - collect_time))
 
+    total_size = 0
     statistics_file = os.path.normpath(os.path.join(os.path.abspath(dest), "statistics.txt"))
     statistics_fd = open(statistics_file, "w")
     for key in statistics_dict.keys():
         logging.debug("{} file appears {} times, total size {:.2f}kb"
                       .format(key, statistics_dict[key][0], statistics_dict[key][1] / 1024))
-        summary = "{} file appears {} times, total size {:.2f}kb:" \
-            .format(key, statistics_dict[key][0],
-                    statistics_dict[key][1] / 1024)
+        summary = "{} file appears {} times, total size {:.2f}MB:" \
+            .format(key, statistics_dict[key][0], statistics_dict[key][1] / 1024)
+        total_size += statistics_dict[key][1] / (1024 * 1024)
         statistics_fd.writelines(summary)
         statistics_fd.writelines("\n")
         for appear in statistics_dict[key][2]:
@@ -191,4 +226,6 @@ if __name__ == '__main__':
             statistics_fd.write("\n")
     statistics_fd.close()
     write_time = time.time()
+    logging.debug("total_size: {:.2}kb, statistics use {}s"
+                  .format(total_size, write_time - statistics_time))
     logging.debug("statistics use {}s".format(write_time - statistics_time))

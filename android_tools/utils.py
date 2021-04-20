@@ -76,3 +76,20 @@ def create_path(path: str, force: bool):
             shutil.rmtree(path)
     os.makedirs(path, 0o777, True)
     logging.info("path {} created".format(path))
+
+
+def list_repository(git_projects_dict):
+    diff_repos = []
+    clone_repos = []
+    items = git_projects_dict.items()
+    for repository_name, git_info in items:
+        if len(git_info) > 2:
+            diff_repos.append(repository_name)
+        else:
+            clone_repos.append(repository_name)
+    logging.info("diff repositories:")
+    for diff in diff_repos:
+        logging.info("    {}".format(diff))
+    logging.info("clone repositories:")
+    for clone in clone_repos:
+        logging.info("    {}".format(clone))
