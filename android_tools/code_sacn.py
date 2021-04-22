@@ -12,11 +12,10 @@ import android_tools.utils
 verbose = False
 git_revision = "freeme-11.0.0_master"
 git_revision_app = "freeme-11.0.0_master-sprd"
-statistics_dict = {}
-rm_files = ("so", "jar", "jpg", "png", "zip", "gz", "ogg", "bat",
+rm_files = ("a", "so", "jar", "jpg", "png", "PNF", "zip", "gz", "ogg",
             "db", "lic", "apk", "ttf", "pdf", "mp3", "mp4", "tflite",
-            "pk8", "pem", "txt", "remove_me", "dummy", "dummy_files",
-            "presets_dummy", "gradlew", "jks")
+            "pk8", "pem", "txt", "jks", "java~", "exe", "dat", "02",
+            "jet" "bat", "wav", "gif")
 rm_folders = (".git", "BaiduLocation", "SprdSignApks")
 remove_paths = ("vendor/freeme/packages/apps/FreemeOTA/external",)
 
@@ -50,8 +49,6 @@ git_projects_dict = {
         ("vendor/freeme/packages/apps/FreemeMultiApp", "main-R"),
     "Freeme/platforms/common/apps/FreemeAgingTool":
         ("vendor/freeme/packages/apps/FreemeAgingTool", "REL/main-30"),
-    # "Freeme/platforms/common/apps/FreemeGallery":
-    #     ("vendor/freeme/packages/apps/FreemeGallery", "all-master"),
     # "Freeme/platforms/common/apps/FreemeVAssistant":
     #     ("vendor/freeme/packages/apps/FreemeVAssistant", "all-master"),
     "Freeme/platforms/common/apps/FreemeCalculator":
@@ -78,13 +75,34 @@ git_projects_dict = {
         ("vendor/freeme/packages/apps/FreemeMagnification", "REL/freeme11"),
     "Freeme/platforms/common/apps/FreemeMsa":
         ("vendor/freeme/packages/apps/FreemeMsa", "REL/main"),
+    "Freeme/platforms/common/apps/FreemeCompass":
+        ("vendor/freeme/packages/apps/FreemeCompass", "master"),
+    "Freeme/platforms/common/apps/FreemeHealthControl":
+        ("vendor/freeme/packages/apps/FreemeHealthControl", "main"),
+    "Freeme/platforms/common/apps/FreemeMirror":
+        ("vendor/freeme/packages/apps/FreemeMirror", "main"),
+    # 9.0
+    "Freeme/platforms/common/apps/FreemeOneStep":
+        ("vendor/freeme/packages/apps/FreemeOneStep", git_revision),
+    "Freeme/platforms/common/apps/FreemeReliability":
+        ("vendor/freeme/packages/apps/FreemeReliability", "freeme-9.1.0_prod"),
+    # 8.0
+    "Freeme/platforms/common/apps/FreemeFaceServiceSimple":
+        ("vendor/freeme/packages/apps/FreemeFaceServiceSimple", "develop"),
+    # 7.0
+    "Freeme/platforms/common/apps/FreemeBluelightFilter":
+        ("vendor/freeme/packages/apps/FreemeBluelightFilter", "master"),
     # care
     # "Freeme/platforms/common/apps/FreemeHealthAssistant":
     #     ("vendor/freeme/packages/apps/FreemeHealthAssistant", "main"),
-    # vmic
+    # cloud phone
     "Freeme/platforms/common/manbox/vmic": ("vendor/freeme/system/vmic", "cmcc_dev"),
     "Freeme/FreemeDEV/products/RemoteOperation":
-        ("vendor/freeme/packages/apps/VmicRemoteOperation", "main")
+        ("vendor/freeme/packages/apps/VmicRemoteOperation", "main"),
+    "Freeme/platforms/common/apps/FreemeFactoryTest":
+        ("vendor/freeme/packages/apps/FreemeFactoryTest", "cmcc_dev"),
+    "Freeme/platforms/common/apps/FreemeMonkey":
+        ("vendor/freeme/packages/apps/FreemeFactoryTest", "cmcc_dev")
 }
 """
 git repositories info.
@@ -148,36 +166,6 @@ def deal_others():
         if not os.path.exists(dest_path):
             shutil.copytree(os.path.join(plus_codes, plus), dest_path)
 
-    for remove_path in remove_paths:
-        abs_remove_path = os.path.join(dest, remove_path)
-        if os.path.exists(abs_remove_path):
-            logging.debug("remove {}".format(abs_remove_path))
-            shutil.rmtree(abs_remove_path)
-
-
-def do_statistics():
-    logging.debug("do statistics of {}".format(dest))
-    for root, dirs, files in os.walk(dest):
-        for file in files:
-            file_splits = file.split(".")
-            file_suffix = file_splits[-1]
-            if file_suffix in rm_files:
-                os.remove(os.path.join(root, file))
-            else:
-                abs_file_path = os.path.normpath(os.path.join(root, file))
-                count = statistics_dict.get(file_suffix, [0, 0, []])
-                count[2].append(abs_file_path)
-                statistics_dict[file_suffix] = [count[0] + 1,
-                                                count[1] + os.path.getsize(abs_file_path),
-                                                count[2]]
-        for dir_name in dirs:
-            abs_path = os.path.join(root, dir_name)
-            if dir_name in rm_folders or not os.listdir(abs_path):
-                shutil.rmtree(abs_path)
-        if not os.listdir(root):
-            logging.debug("remove {}".format(root))
-            os.rmdir(root)
-
 
 if __name__ == '__main__':
     args = parse_args()
@@ -200,32 +188,38 @@ if __name__ == '__main__':
         exit(1)
 
     start_time = time.time()
-    android_tools.utils.create_path(dest, force)
-    do_clone()
+    # android_tools.utils.create_path(dest, force)
+    # do_clone()
     deal_others()
     collect_time = time.time()
     logging.debug("collect code use {}s".format(collect_time - start_time))
-    do_statistics()
+    sorted_result = sorted(android_tools.utils.do_statistics(
+        dest, rm_files, rm_folders, remove_paths).items(),
+                           key=lambda item: (item[1][1]),
+                           reverse=True)
+
     statistics_time = time.time()
     logging.debug("statistic use {}s".format(statistics_time - collect_time))
 
     total_size = 0
     statistics_file = os.path.normpath(os.path.join(os.path.abspath(dest), "statistics.txt"))
     statistics_fd = open(statistics_file, "w")
-    for key in statistics_dict.keys():
+    for sorted_item in sorted_result:
+        key = sorted_item[0]
+        # value_list is [file_count, file_total_size, [file_lists]]
+        value_list = sorted_item[1]
         logging.debug("{} file appears {} times, total size {:.2f}kb"
-                      .format(key, statistics_dict[key][0], statistics_dict[key][1] / 1024))
-        summary = "{} file appears {} times, total size {:.2f}MB:" \
-            .format(key, statistics_dict[key][0], statistics_dict[key][1] / 1024)
-        total_size += statistics_dict[key][1] / (1024 * 1024)
+                      .format(key, value_list[0], value_list[1] / 1024))
+        summary = "{} file appears {} times, total size {:.2f}kb:" \
+            .format(key, value_list[0], value_list[1] / 1024)
+        total_size += value_list[1]
         statistics_fd.writelines(summary)
         statistics_fd.writelines("\n")
-        for appear in statistics_dict[key][2]:
+        for appear in value_list[2]:
             statistics_fd.write("\t")
             statistics_fd.write(appear)
             statistics_fd.write("\n")
     statistics_fd.close()
     write_time = time.time()
-    logging.debug("total_size: {:.2}kb, statistics use {}s"
-                  .format(total_size, write_time - statistics_time))
+    logging.debug("total_size: {:.4} MB".format(total_size / (1024 * 1024)))
     logging.debug("statistics use {}s".format(write_time - statistics_time))

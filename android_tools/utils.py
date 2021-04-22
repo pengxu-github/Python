@@ -93,3 +93,50 @@ def list_repository(git_projects_dict):
     logging.info("clone repositories:")
     for clone in clone_repos:
         logging.info("    {}".format(clone))
+
+
+def do_statistics(dest: str, rm_files: tuple, rm_folders: tuple, rm_relative_paths: tuple):
+    """
+    do statistics for the folder dest, remove files in rm_files,
+    and folders in rm_folders
+
+    Args:
+        dest: target folder for statistics
+        rm_files: files tuple to remove
+        rm_folders: folders tuple to remove
+        rm_relative_paths: relative path of dest to remove
+
+    Returns:a dict with the file extension as key, and a list contains file count,
+            file total size, and files path list as value
+
+    """
+    for remove_path in rm_relative_paths:
+        abs_remove_path = os.path.join(dest, remove_path)
+        if os.path.exists(abs_remove_path):
+            logging.debug("remove requested folder {}".format(abs_remove_path))
+            shutil.rmtree(abs_remove_path)
+
+    statistics_dict = {}
+    logging.debug("do statistics for {}".format(dest))
+    for root, dirs, files in os.walk(dest):
+        for dir_name in dirs:
+            abs_path = os.path.join(root, dir_name)
+            if dir_name in rm_folders or not os.listdir(abs_path):
+                shutil.rmtree(abs_path)
+        for file in files:
+            file_splits = file.split(".")
+            file_suffix = file_splits[-1]
+            if len(file_splits) == 1 or file_suffix in rm_files:
+                os.remove(os.path.join(root, file))
+            else:
+                abs_file_path = os.path.normpath(os.path.join(root, file))
+                count = statistics_dict.get(file_suffix, [0, 0, []])
+                count[2].append(abs_file_path)
+                statistics_dict[file_suffix] = [count[0] + 1,
+                                                count[1] + os.path.getsize(abs_file_path),
+                                                count[2]]
+        if not os.listdir(root):
+            logging.debug("remove empty folder {}".format(root))
+            os.rmdir(root)
+
+    return statistics_dict
