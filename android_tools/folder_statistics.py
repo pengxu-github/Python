@@ -3,10 +3,10 @@ import os
 
 import android_tools.utils
 
-rm_files = ("a", "so", "jar", "jpg", "png", "zip", "gz", "ogg", "bat",
+rm_files = ("a", "so", "jar", "jpg", "png", "PNF", "zip", "gz", "ogg",
             "db", "lic", "apk", "ttf", "pdf", "mp3", "mp4", "tflite",
             "pk8", "pem", "txt", "jks", "java~", "exe", "dat", "02",
-            "jet")
+            "jet" "bat", "wav", "gif", "bat", "properties", "preset")
 rm_folders = (".git",)
 rm_relative_paths = ("frameworks/neuropilot", "frameworks/opt/agps_lib",
                      "frameworks/opt/mdlogger_lib", "frameworks/opt/libimsma",

@@ -15,7 +15,7 @@ git_revision_app = "freeme-11.0.0_master-sprd"
 rm_files = ("a", "so", "jar", "jpg", "png", "PNF", "zip", "gz", "ogg",
             "db", "lic", "apk", "ttf", "pdf", "mp3", "mp4", "tflite",
             "pk8", "pem", "txt", "jks", "java~", "exe", "dat", "02",
-            "jet" "bat", "wav", "gif")
+            "jet" "bat", "wav", "gif", "bat", "properties", "preset")
 rm_folders = (".git", "BaiduLocation", "SprdSignApks")
 remove_paths = ("vendor/freeme/packages/apps/FreemeOTA/external",)
 
@@ -49,8 +49,10 @@ git_projects_dict = {
         ("vendor/freeme/packages/apps/FreemeMultiApp", "main-R"),
     "Freeme/platforms/common/apps/FreemeAgingTool":
         ("vendor/freeme/packages/apps/FreemeAgingTool", "REL/main-30"),
-    # "Freeme/platforms/common/apps/FreemeVAssistant":
-    #     ("vendor/freeme/packages/apps/FreemeVAssistant", "all-master"),
+    "Freeme/platforms/common/apps/FreemeVAssistant":
+        ("vendor/freeme/packages/apps/FreemeVAssistant", "main-ifly"),
+    "Freeme/platforms/common/apps/FreemeStepCounter":
+        ("vendor/freeme/packages/apps/FreemeStepCounter", "main"),
     "Freeme/platforms/common/apps/FreemeCalculator":
         ("vendor/freeme/packages/apps/FreemeCalculator", "freeme11"),
     "Freeme/platforms/common/apps/FreemeSuperShot":
