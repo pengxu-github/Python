@@ -1,7 +1,9 @@
+import codecs
 import datetime
 import logging
 import multiprocessing
 import os
+import re
 import shutil
 import time
 
@@ -124,19 +126,49 @@ def do_statistics(dest: str, rm_files: tuple, rm_folders: tuple, rm_relative_pat
             if dir_name in rm_folders or not os.listdir(abs_path):
                 shutil.rmtree(abs_path)
         for file in files:
+            abs_file_path = os.path.normpath(os.path.join(root, file))
             file_splits = file.split(".")
             file_suffix = file_splits[-1]
-            if len(file_splits) == 1 or file_suffix in rm_files:
-                os.remove(os.path.join(root, file))
+            if len(file_splits) == 1 or file_suffix in rm_files \
+                    or is_binary_file(abs_file_path) \
+                    or is_abnormal_suffix(file_suffix):
+                os.remove(abs_file_path)
             else:
-                abs_file_path = os.path.normpath(os.path.join(root, file))
                 count = statistics_dict.get(file_suffix, [0, 0, []])
                 count[2].append(abs_file_path)
                 statistics_dict[file_suffix] = [count[0] + 1,
-                                                count[1] + os.path.getsize(abs_file_path),
+                                                count[1] + os.path.getsize(
+                                                    abs_file_path),
                                                 count[2]]
         if not os.listdir(root):
             logging.debug("remove empty folder {}".format(root))
             os.rmdir(root)
 
     return statistics_dict
+
+
+_TEXT_BOMS = (
+    codecs.BOM_UTF16_BE,
+    codecs.BOM_UTF16_LE,
+    codecs.BOM_UTF32_BE,
+    codecs.BOM_UTF32_LE,
+    codecs.BOM_UTF8,
+)
+
+
+def is_binary_file(file_path):
+    with open(file_path, 'rb') as file:
+        initial_bytes = file.read(8192)
+        file.close()
+    return not any(initial_bytes.startswith(bom) for bom in
+                   _TEXT_BOMS) and b'\0' in initial_bytes
+
+
+def is_abnormal_suffix(file_suffix: str):
+    if re.search(r"\W", file_suffix) is None:
+        if file_suffix.isalpha():
+            return False
+        else:
+            return True
+    else:
+        return True

@@ -5,8 +5,10 @@ import android_tools.utils
 
 rm_files = ("a", "so", "jar", "jpg", "png", "PNF", "zip", "gz", "ogg",
             "db", "lic", "apk", "ttf", "pdf", "mp3", "mp4", "tflite",
-            "pk8", "pem", "txt", "jks", "java~", "exe", "dat", "02",
-            "jet" "bat", "wav", "gif", "bat", "properties", "preset")
+            "pk8", "pem", "txt", "jks", "exe", "dat",
+            "jet" "bat", "wav", "gif", "bat", "properties", "preset",
+            "dhex", "ko", "bin", "bmp", "xws", "ccu",
+            "ddr", "hex", "img", "dll", "yuv", "darwin", "der")
 rm_folders = (".git",)
 rm_relative_paths = ("frameworks/neuropilot", "frameworks/opt/agps_lib",
                      "frameworks/opt/mdlogger_lib", "frameworks/opt/libimsma",
@@ -15,7 +17,7 @@ rm_relative_paths = ("frameworks/neuropilot", "frameworks/opt/agps_lib",
                      "frameworks/opt/duraspeed_lib", "frameworks/opt/jpe_lib",
                      "frameworks/opt/libimsma_bin_lib", "frameworks/base/agps",
                      "external/aee", "external/doeapp_lib")
-dest = "/home/xupeng/work/code/freemeos-code/EAL4/MTK_codes"
+dest = "/home/xupeng/work/code/freemeos-code/EAL4/FreemeOwnRate-tmp/system/instrument"
 
 if __name__ == '__main__':
     logging.basicConfig(
@@ -51,4 +53,4 @@ if __name__ == '__main__':
             statistics_fd.write(appear)
             statistics_fd.write("\n")
     statistics_fd.close()
-    logging.debug("total_size: {:.2}MB".format(total_size / 1024))
+    logging.debug("total_size: {:.4}MB".format(total_size / 1024))
